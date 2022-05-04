@@ -1,0 +1,9 @@
+[build]
+target = "index.html"
+dist = "../dist"
+
+[[proxy]]
+backend = "http://127.0.0.1:3000/api/"
+
+[[proxy]]
+backend = "http://127.0.0.1:3000/assets/"

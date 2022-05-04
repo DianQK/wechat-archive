@@ -1,0 +1,5 @@
+/target
+/assets
+*.db
+/docker/data
+/wechat-archive.toml

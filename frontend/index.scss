@@ -1,0 +1,46 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+
+  height: 100%;
+}
+
+.app {
+    height: 100%;
+    display: flex;
+}
+
+.owners {
+    width: 72px;
+    padding: 12px;
+}
+
+.conversations {
+  padding:5px;
+  margin-top:5px;
+  width:300px;
+  overflow-y:scroll;
+
+  .conversation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+
+    .content {
+      flex: 1;
+      margin-left: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.messages {
+  padding:5px;
+  margin-top:5px;
+  flex: 1;
+  overflow-y:scroll;
+}
