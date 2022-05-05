@@ -38,12 +38,12 @@ pub fn conversations(props: &ConversationsProps) -> Html {
     let conversations = use_state(|| Vec::<Conversation>::new());
     {
         let conversations = conversations.clone();
-        let username = props.username.clone();
-        use_effect(move || {
-            if conversations.is_empty() {
+        use_effect_with_deps(
+            move |owner| {
+                let owner = owner.clone();
                 spawn_local(async move {
                     let resp: Vec<Conversation> =
-                        Request::get(&format!("/api/conversations/{}", username))
+                        Request::get(&format!("/api/conversations/{}", owner))
                             .send()
                             .await
                             .unwrap()
@@ -52,9 +52,10 @@ pub fn conversations(props: &ConversationsProps) -> Html {
                             .expect("Conversation 解析失败");
                     conversations.set(resp);
                 });
-            }
-            || {}
-        });
+                || {}
+            },
+            props.username.clone(),
+        );
     }
     html! {
         <div class="conversations">
