@@ -38,9 +38,25 @@ body {
   }
 }
 
+// TODO: 移除 bulma
 .messages {
   padding:5px;
   margin-top:5px;
   flex: 1;
   overflow-y:scroll;
+
+  .message {
+    padding: 5px;
+    display: flex;
+    margin-bottom: 5px;
+
+    .avatar {
+      margin-right: 5px;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+    }
+  }
 }

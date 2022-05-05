@@ -115,8 +115,12 @@ pub fn messages(props: &MessagesProps) -> Html {
                 { "加载更多" }
             </button>
             {(*messages).iter().map(|message| html!{
-                <div key={message.id.clone()}>
-                <div>
+                <div class="message" key={message.id.clone()}>
+                <figure class="avatar image is-48x48">
+                    <img class="is-rounded" src={message.sender.avatar.clone()}/>
+                </figure>
+                <div class="content">
+                    <small>{ &message.sender.username }</small>
                     { message.content.clone().unwrap_or("NULL".to_string()) }
                  </div>
                 </div>
