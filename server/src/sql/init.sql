@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `wa_user_info`(
 
 CREATE TABLE IF NOT EXISTS `wa_contact`( -- rcontact
    `wa_owner` VARCHAR(40) NOT NULL COMMENT '属于谁的好友',
-   `username` VARCHAR(40) NOT NULL UNIQUE COMMENT '微信内部唯一 id',
+   `username` VARCHAR(40) NOT NULL COMMENT '微信内部唯一 id',
    `alias` VARCHAR(100) DEFAULT NULL COMMENT '用户可以设置的微信号',
    `con_remark` VARCHAR(100) DEFAULT NULL,
    `domain_list` VARCHAR(100) DEFAULT NULL,
@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `wa_contact`( -- rcontact
    `ticket` VARCHAR(100) DEFAULT NULL,
    `username_flag` BIGINT DEFAULT 0,
    PRIMARY KEY ( `username` ),
+   UNIQUE KEY `uniq_id` (`wa_owner`,`username`),
    INDEX(`wa_owner`, `alias`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -95,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `wa_img_info`( -- ImgInfo2
 CREATE TABLE IF NOT EXISTS `wa_conversation`(
    `id` INT UNSIGNED AUTO_INCREMENT,
    `owner` VARCHAR(100) NOT NULL,
-   `username` VARCHAR(100) NOT NULL UNIQUE,
+   `username` VARCHAR(100) NOT NULL,
    `msg_count` INT UNSIGNED DEFAULT 0,
    `last_time` BIGINT UNSIGNED NOT NULL,
    `content` MEDIUMTEXT DEFAULT NULL,
@@ -103,5 +104,6 @@ CREATE TABLE IF NOT EXISTS `wa_conversation`(
    `digest` VARCHAR(255) DEFAULT '',
    `digest_user` TEXT DEFAULT NULL,
    PRIMARY KEY ( `id` ),
+   UNIQUE KEY `uniq_id` (`owner`,`username`),
    INDEX(`owner`, `username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
