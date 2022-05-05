@@ -1,3 +1,4 @@
+use chrono::{DateTime, FixedOffset, Local, NaiveDateTime, TimeZone, Utc};
 use gloo_net::http::Request;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen_futures::spawn_local;
@@ -120,7 +121,8 @@ pub fn messages(props: &MessagesProps) -> Html {
                     <img class="is-rounded" src={message.sender.avatar.clone()}/>
                 </figure>
                 <div class="content">
-                    <strong><small>{ &message.sender.username }</small></strong>
+                // TODO: 将时间计算移出来
+                 <small class="info"><strong class="name">{ &message.sender.username }</strong> { FixedOffset::east(8 * 3600).timestamp((*&message.create_time as i64) / 1000, 0).format("%Y-%m-%d %H:%M:%S") }</small>
                     { message.content.clone().unwrap_or("NULL".to_string()) }
                  </div>
                 </div>

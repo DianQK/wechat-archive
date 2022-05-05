@@ -56,7 +56,16 @@ body {
 
     .content {
       display: flex;
+      flex: 1;
       flex-direction: column;
+
+      .info {
+        display: flex;
+        .name {
+          flex: 1;
+          margin-right: 15px;
+        }
+      }
     }
   }
 }
