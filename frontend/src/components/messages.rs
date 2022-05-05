@@ -120,7 +120,7 @@ pub fn messages(props: &MessagesProps) -> Html {
                     <img class="is-rounded" src={message.sender.avatar.clone()}/>
                 </figure>
                 <div class="content">
-                    <small>{ &message.sender.username }</small>
+                    <strong><small>{ &message.sender.username }</small></strong>
                     { message.content.clone().unwrap_or("NULL".to_string()) }
                  </div>
                 </div>
