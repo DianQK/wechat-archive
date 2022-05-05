@@ -41,7 +41,7 @@ pub struct Message {
 impl Message {
     fn new(wa_message: &WaMessage) -> Self {
         let sender_username = wa_message.get_sender_username();
-        let sender_avatr = utils::get_avatar_path(&sender_username);
+        let sender_avatar = utils::get_avatar_path(&sender_username);
         Self {
             wa_owner: wa_message.wa_owner.clone(),
             id: wa_message.id.unwrap(),
@@ -52,7 +52,7 @@ impl Message {
             content: wa_message.get_text_content(),
             sender: Sender {
                 username: sender_username,
-                avatar: sender_avatr,
+                avatar: sender_avatar,
             },
         }
     }
