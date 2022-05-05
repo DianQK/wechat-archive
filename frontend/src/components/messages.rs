@@ -10,30 +10,25 @@ pub struct MessagesProps {
     pub talker: String,
 }
 
+// TODO: 复制代码
 #[derive(Debug, Clone, Deserialize, Serialize, Default)]
-pub struct WaMessage {
+pub struct Sender {
+    pub username: String,
+    // pub display_name: String, // Redis?
+    pub avatar: String,
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Default)]
+pub struct Message {
     pub wa_owner: String,
-    // pub msg_id: i32,
     pub id: u32,
-    // pub msg_svr_id: u64,
+    pub msg_svr_id: u64,
     pub r#type: i32,
-    pub status: Option<i32>,
-    pub is_send: i32,
-    // pub is_show_timer: Option<i32>,
+    // pub is_send: i32,
     pub create_time: u64,
     pub talker: String,
     pub content: Option<String>,
-    pub img_path: Option<String>,
-}
-
-impl WaMessage {
-    pub fn display_content(&self) -> String {
-        match &self.r#type {
-            // TODO: enum
-            1 => self.content.clone().unwrap_or("".to_string()),
-            _ => "[TODO]".to_string(),
-        }
-    }
+    pub sender: Sender,
 }
 
 #[derive(Properties, PartialEq)]
@@ -49,7 +44,7 @@ pub fn messages(props: &MessagesProps) -> Html {
         talker: props.talker.clone(),
         page: 1,
     });
-    let messages = use_state(|| Vec::<WaMessage>::new());
+    let messages = use_state(|| Vec::<Message>::new());
     if state.talker != props.talker {
         state.set(State {
             talker: props.talker.clone(),
@@ -66,7 +61,7 @@ pub fn messages(props: &MessagesProps) -> Html {
                 spawn_local(async move {
                     let scroll_el = node_ref.cast::<Element>().unwrap();
                     let scroll_el_scroll_height = scroll_el.scroll_height();
-                    let mut result: Vec<WaMessage> = Request::get(&format!(
+                    let mut result: Vec<Message> = Request::get(&format!(
                         "/api/messages/{}/{}?page={}&size=50",
                         &owner, state.talker, state.page
                     ))
@@ -121,7 +116,9 @@ pub fn messages(props: &MessagesProps) -> Html {
             </button>
             {(*messages).iter().map(|message| html!{
                 <div key={message.id.clone()}>
-                    { message.display_content() }
+                <div>
+                    { message.content.clone().unwrap_or("NULL".to_string()) }
+                 </div>
                 </div>
             }).collect::<Html>()}
         </div>

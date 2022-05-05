@@ -18,6 +18,46 @@ pub struct Params {
     size: u64,
 }
 
+#[derive(Debug, Deserialize, Serialize, Default)]
+pub struct Sender {
+    pub username: String,
+    // pub display_name: String, // Redis?
+    pub avatar: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, Default)]
+pub struct Message {
+    pub wa_owner: String,
+    pub id: u32,
+    pub msg_svr_id: u64,
+    pub r#type: i32,
+    // pub is_send: i32,
+    pub create_time: u64,
+    pub talker: String,
+    pub content: Option<String>,
+    pub sender: Sender,
+}
+
+impl Message {
+    fn new(wa_message: &WaMessage) -> Self {
+        let sender_username = wa_message.get_sender_username();
+        let sender_avatr = utils::get_avatar_path(&sender_username);
+        Self {
+            wa_owner: wa_message.wa_owner.clone(),
+            id: wa_message.id.unwrap(),
+            msg_svr_id: wa_message.msg_svr_id,
+            r#type: wa_message.r#type,
+            create_time: wa_message.create_time,
+            talker: wa_message.talker.clone(),
+            content: wa_message.get_text_content(),
+            sender: Sender {
+                username: sender_username,
+                avatar: sender_avatr,
+            },
+        }
+    }
+}
+
 pub async fn get_messages(
     Path((owner, talker)): Path<(String, String)>,
     Query(params): Query<Params>,
@@ -35,5 +75,6 @@ pub async fn get_messages(
         .unwrap();
     let mut messages = messages.records;
     messages.reverse(); //TODO: 通过 sql offset + asc 直接获取？
+    let messages: Vec<Message> = messages.iter().map(|m| Message::new(m)).collect();
     Ok(Json(messages))
 }

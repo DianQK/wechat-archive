@@ -29,6 +29,7 @@ pub struct WaMessage {
     pub solitaire_fold_info: Option<rbatis::Bytes>,
     pub history_id: Option<String>,
 }
+
 impl_field_name_method!(WaMessage {
     wa_owner,
     msg_svr_id,
@@ -54,6 +55,37 @@ impl WaMessage {
             1 => self._get_text_digest(),
             3 => "[图片]".to_string(),
             _ => "[TODO]".to_string(),
+        }
+    }
+
+    // TODO: 如何支持各种类型？
+    pub fn get_text_content(&self) -> Option<String> {
+        // 添加 type enum
+        match self.r#type {
+            1 => self.content.clone(), // TODO: 移除 username
+            3 => Some("[图片]".to_string()),
+            _ => Some("[TODO]".to_string()),
+        }
+    }
+
+    pub fn is_chatroom(&self) -> bool {
+        self.talker.ends_with("@chatroom")
+    }
+
+    pub fn get_sender_username(&self) -> String {
+        if self.is_send == 1 {
+            return self.wa_owner.clone();
+        }
+        if self.is_chatroom() {
+            let content = &self.content.as_ref().unwrap();
+            if let Some(index) = content.find(':') {
+                return content[0..index].to_string();
+            } else {
+                // error
+                return "".to_string();
+            }
+        } else {
+            return self.talker.clone();
         }
     }
 
