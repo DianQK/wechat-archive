@@ -7,10 +7,8 @@ use crate::{
 use anyhow::Result;
 use log::info;
 use rbatis::{rbatis::Rbatis, Page, PageRequest};
-use reqwest::Response;
 use std::collections::HashMap;
 use std::{
-    error::Error,
     ffi::OsStr,
     fs,
     path::{Path, PathBuf},
@@ -51,7 +49,7 @@ impl MergeMicroMsg {
     }
 
     fn rsync_to_dest(&self, source: &Path) {
-        println!("{} -> {}", source.display(), self.dest.display());
+        info!("{} -> {}", source.display(), self.dest.display());
         Command::new("rsync")
             .arg("-r")
             .arg(source)
@@ -67,7 +65,7 @@ impl MergeMicroMsg {
             let path = entry.path();
             let msg_db_path = path.join("EnMicroMsg.db");
             if msg_db_path.exists() {
-                println!("path: {}", path.display());
+                info!("path: {}", path.display());
                 self.merge_user_database(msg_db_path.as_path()).await?;
                 self.merge_user_files(path.as_path())?;
             }
@@ -79,7 +77,7 @@ impl MergeMicroMsg {
         // 解密数据库
         let parent_path = db_path.parent().unwrap();
         let decrypted_db_path = parent_path.join("EnMicroMsg.decrypted.db");
-        println!("db path: {}", decrypted_db_path.display());
+        info!("db path: {}", decrypted_db_path.display());
         if decrypted_db_path.exists() {
             fs::remove_file(decrypted_db_path.as_path()).expect("删除历史解密 db 失败");
         }
@@ -100,7 +98,7 @@ impl MergeMicroMsg {
             .arg(&format!("ATTACH DATABASE '{}' AS db KEY ''; SELECT sqlcipher_export('db'); DETACH DATABASE db;", decrypted_db_path.display()))
             .output()
             .expect(&format!("同步用户数据失败"));
-        println!("output: {:?}", output);
+        info!("output: {:?}", output);
         let msg_rb = Rbatis::new();
         msg_rb
             .link(&format!("sqlite://{}", decrypted_db_path.display()))
@@ -112,7 +110,6 @@ impl MergeMicroMsg {
     async fn merge_contacts(&self, msg_rb: &Rbatis, owner: &str) -> Result<()> {
         // 保存联系人
         let msg_contacts: Vec<MsgRContact> = msg_rb.fetch_list().await.unwrap();
-        // println!("rcontact: {:?}", result[0]);
         for msg_contact in msg_contacts.iter() {
             let wa_contact = WaContact::from_msg(&owner, &msg_contact);
             let old_wa_contact: Option<WaContact> = RB
@@ -220,7 +217,7 @@ impl MergeMicroMsg {
             .fetch_by_column(WaUserInfo::username(), &user_info.username)
             .await
             .unwrap();
-        println!("old_user_info {:?}", old_user_info);
+        info!("old_user_info {:?}", old_user_info);
         match old_user_info {
             Some(_) => {
                 RB.update_by_column(WaUserInfo::username(), &user_info)

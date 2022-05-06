@@ -32,7 +32,9 @@ impl WaUserInfo {
                 MsgUserInfo::ID_TYPE_NICKNAME => {
                     nickname = Some(info.value.clone());
                 }
-                _ => {}
+                _ => {
+                    log::error!("未知的 UserInfo.id");
+                }
             }
         }
         WaUserInfo {
