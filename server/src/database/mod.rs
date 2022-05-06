@@ -5,7 +5,7 @@ mod contact;
 pub use contact::WaContact;
 
 mod message;
-pub use message::{MessageType, WaMessage};
+pub use message::{WaMessageType, WaMessage};
 
 mod img_info;
 pub use img_info::WaImgInfo;

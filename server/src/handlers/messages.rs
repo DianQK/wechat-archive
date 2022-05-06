@@ -8,7 +8,7 @@ use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use waapi::model::{Message, Sender};
 
-use crate::database::MessageType;
+use crate::database::WaMessageType;
 use crate::database::WaMessage;
 use crate::utils;
 use crate::RB;
@@ -25,7 +25,7 @@ impl From<WaMessage> for Message {
         let sender_username = wa_message.get_sender_username();
         let sender_avatar = utils::get_avatar_path(&sender_username);
         let r#type = match wa_message.r#type {
-            MessageType::Text => 1,
+            WaMessageType::Text => 1,
             _ => 10000, // TODO: 增加消息类型的转换
         };
         Self {

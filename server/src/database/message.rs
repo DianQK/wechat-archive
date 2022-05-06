@@ -6,7 +6,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 // #[derive(Debug, Deserialize, Serialize, Clone, Copy)]
 #[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug, Clone, Copy)]
 #[repr(i32)]
-pub enum MessageType {
+pub enum WaMessageType {
     UN1879048186 = -1879048186,
     Text = 1,
     Image = 3,
@@ -43,7 +43,7 @@ pub struct WaMessage {
     // pub msg_id: i32,
     pub id: Option<u32>,
     pub msg_svr_id: u64,
-    pub r#type: MessageType,
+    pub r#type: WaMessageType,
     pub status: Option<i32>,
     pub is_send: i32,
     pub is_show_timer: Option<i32>,
@@ -87,8 +87,8 @@ impl WaMessage {
     pub fn get_digest(&self) -> String {
         // 添加 type enum
         match self.r#type {
-            MessageType::Text => self._get_text_digest(),
-            MessageType::Image => "[图片]".to_string(),
+            WaMessageType::Text => self._get_text_digest(),
+            WaMessageType::Image => "[图片]".to_string(),
             _ => "[TODO]".to_string(),
         }
     }
@@ -97,8 +97,8 @@ impl WaMessage {
     pub fn get_text_content(&self) -> Option<String> {
         // 添加 type enum
         match self.r#type {
-            MessageType::Text => self.content.clone(), // TODO: 移除 username
-            MessageType::Image => Some("[图片]".to_string()),
+            WaMessageType::Text => self.content.clone(), // TODO: 移除 username
+            WaMessageType::Image => Some("[图片]".to_string()),
             _ => Some("[TODO]".to_string()),
         }
     }
