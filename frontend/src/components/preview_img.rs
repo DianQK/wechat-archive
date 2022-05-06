@@ -5,7 +5,7 @@
 // use web_sys::Element;
 use yew::prelude::*;
 
-#[derive(Properties, PartialEq)]
+#[derive(Properties, PartialEq, Clone)]
 pub struct PreviewImgProps {
     pub thumbnail_url: String,
     pub url: String,
@@ -13,13 +13,38 @@ pub struct PreviewImgProps {
 
 #[derive(Properties, PartialEq)]
 struct State {
-    talker: String,
-    page: u64,
+    showing_big_img: bool,
+    class: String,
+    url: String,
 }
 
 #[function_component(PreviewImg)]
 pub fn previewImg(props: &PreviewImgProps) -> Html {
+    let state = use_state(|| State {
+        showing_big_img: false,
+        class: "preview-img".to_string(),
+        url: props.thumbnail_url.clone(),
+    });
+    let onclick = {
+        let state = state.clone();
+        let props = props.clone();
+        Callback::from(move |_| {
+            if state.showing_big_img {
+                state.set(State {
+                    showing_big_img: false,
+                    class: "preview-img".to_string(),
+                    url: props.thumbnail_url.clone(),
+                });
+            } else {
+                state.set(State {
+                    showing_big_img: true,
+                    class: "big-img".to_string(),
+                    url: props.url.clone(),
+                });
+            }
+        })
+    };
     html! {
-        <img class="preview-img" src={props.thumbnail_url.clone()}/>
+        <img  onclick={onclick} class={classes!(state.class.clone())} src={state.url.clone()}/>
     }
 }

@@ -72,4 +72,10 @@ body {
 
 .preview-img {
   max-width: 80px;
+  cursor: -webkit-zoom-in;
+}
+.big-img {
+  object-fit: contain;
+  max-height: 520px;
+  align-self: flex-start;
 }
