@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 pub enum Content {
     Unknown { type_id: i32 },
     Text { text: String },
-    Image { url: String },
+    Image { thumbnail_url: String , url: String },
     Emoji,
 }
 

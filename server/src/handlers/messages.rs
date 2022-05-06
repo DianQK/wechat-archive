@@ -28,6 +28,23 @@ impl From<WaMessage> for Message {
             WaMessageType::Text => Content::Text {
                 text: wa_message.content.unwrap_or("Oops!!!".to_string()),
             }, // TODO: 日志记录 or Content::Error
+            WaMessageType::Image => {
+                let img_path = &wa_message.img_path.unwrap();
+                let img_id = &img_path[23..img_path.len()];
+                let img_prefix_1 = &img_id[0..2];
+                let img_prefix_2 = &img_id[2..4];
+                // TODO: 不存在的图片能否重新下载？
+                Content::Image {
+                    thumbnail_url: format!(
+                        "/assets/image2/{}/{}/th_{}",
+                        img_prefix_1, img_prefix_2, img_id
+                    ),
+                    url: format!(
+                        "/assets/image2/{}/{}/{}.jpg",
+                        img_prefix_1, img_prefix_2, img_id
+                    ), // TODO: 从 ImgeInfo2 中查询
+                }
+            }
             _ => Content::Unknown {
                 type_id: wa_message.r#type as i32,
             },

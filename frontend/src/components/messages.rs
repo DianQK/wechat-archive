@@ -1,3 +1,4 @@
+use crate::components::PreviewImg;
 use chrono::{DateTime, FixedOffset, Local, NaiveDateTime, TimeZone, Utc};
 use gloo_net::http::Request;
 use waapi::model::{Content, Message};
@@ -106,7 +107,7 @@ pub fn messages(props: &MessagesProps) -> Html {
                     match &message.content {
                         Content::Unknown { type_id } => html! { <div>{ format!("Unkown Message Type: {}", type_id) }</div> },
                         Content::Text { text } => html! { <div>{ text }</div> },
-                        Content::Image { url } => html! { <img src={url.clone()}/> },
+                        Content::Image { thumbnail_url, url } => html! { <PreviewImg thumbnail_url={thumbnail_url.clone()} url={url.clone()} /> },
                         Content::Emoji => html! { <div>{ "Emoji" }</div> }
                     }
                 }
