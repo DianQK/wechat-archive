@@ -7,7 +7,7 @@ pub struct WaConversation {
     pub msg_count: u64,
     pub last_time: u64,
     pub content: Option<String>,
-    pub msg_type: i32,
+    // pub msg_type: i32,
     pub digest: String,
     pub digest_user: Option<String>,
 }

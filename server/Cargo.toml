@@ -25,6 +25,7 @@ tower = "0.4.12"
 tower-http = { version = "0.3.2", features = ["full"] }
 md5 = "0.7.0"
 toml = "0.5.9"
+serde_repr = "0.1.8"
 
 # [profile.release]
 # opt-level = 3

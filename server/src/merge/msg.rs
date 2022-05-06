@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::database::{WaContact, WaImgInfo, WaMessage, WaUserInfo};
+use crate::database::{MessageType, WaContact, WaImgInfo, WaMessage, WaUserInfo};
 use rbatis::crud::CRUD;
 
 #[crud_table(table_name:userinfo)]
@@ -110,7 +110,7 @@ impl WaContact {
 pub struct MsgMessage {
     pub msgId: i32,
     pub msgSvrId: u64,
-    pub r#type: i32,
+    pub r#type: MessageType,
     pub status: Option<i32>,
     pub isSend: i32,
     pub isShowTimer: Option<i32>,

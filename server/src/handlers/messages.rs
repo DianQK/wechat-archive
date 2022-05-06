@@ -7,6 +7,7 @@ use rbatis::{rbatis::Rbatis, Page, PageRequest};
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 
+use crate::database::MessageType;
 use crate::database::WaMessage;
 use crate::utils;
 use crate::RB;
@@ -18,19 +19,19 @@ pub struct Params {
     size: u64,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Sender {
     pub username: String,
     // pub display_name: String, // Redis?
     pub avatar: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Message {
     pub wa_owner: String,
     pub id: u32,
     pub msg_svr_id: u64,
-    pub r#type: i32,
+    pub r#type: MessageType,
     // pub is_send: i32,
     pub create_time: u64,
     pub talker: String,

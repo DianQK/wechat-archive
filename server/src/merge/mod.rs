@@ -260,7 +260,7 @@ impl MergeMicroMsg {
                     conversation.msg_count = msg_count;
                     conversation.last_time = message.create_time;
                     conversation.content = message.content.clone();
-                    conversation.msg_type = message.r#type;
+                    // conversation.msg_type = message.r#type;
                     conversation.digest = message.get_digest();
                     conversation.digest_user = Some(digest_user);
                     RB.update_by_column(WaConversation::id(), &conversation)
@@ -274,7 +274,7 @@ impl MergeMicroMsg {
                         msg_count: msg_count,
                         last_time: message.create_time,
                         content: message.content.clone(),
-                        msg_type: message.r#type,
+                        // msg_type: message.r#type,
                         digest: message.get_digest(),
                         digest_user: Some(digest_user),
                     };
