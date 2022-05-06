@@ -6,6 +6,7 @@ use rbatis::crud::CRUD;
 use rbatis::{rbatis::Rbatis, Page, PageRequest};
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
+use waapi::model::{Message, Sender};
 
 use crate::database::MessageType;
 use crate::database::WaMessage;
@@ -19,35 +20,19 @@ pub struct Params {
     size: u64,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Sender {
-    pub username: String,
-    // pub display_name: String, // Redis?
-    pub avatar: String,
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Message {
-    pub wa_owner: String,
-    pub id: u32,
-    pub msg_svr_id: u64,
-    pub r#type: MessageType,
-    // pub is_send: i32,
-    pub create_time: u64,
-    pub talker: String,
-    pub content: Option<String>,
-    pub sender: Sender,
-}
-
-impl Message {
-    fn new(wa_message: &WaMessage) -> Self {
+impl From<WaMessage> for Message {
+    fn from(wa_message: WaMessage) -> Self {
         let sender_username = wa_message.get_sender_username();
         let sender_avatar = utils::get_avatar_path(&sender_username);
+        let r#type = match wa_message.r#type {
+            MessageType::Text => 1,
+            _ => 10000, // TODO: 增加消息类型的转换
+        };
         Self {
             wa_owner: wa_message.wa_owner.clone(),
             id: wa_message.id.unwrap(),
             msg_svr_id: wa_message.msg_svr_id,
-            r#type: wa_message.r#type,
+            r#type,
             create_time: wa_message.create_time,
             talker: wa_message.talker.clone(),
             content: wa_message.get_text_content(),
@@ -76,6 +61,6 @@ pub async fn get_messages(
         .unwrap();
     let mut messages = messages.records;
     messages.reverse(); //TODO: 通过 sql offset + asc 直接获取？
-    let messages: Vec<Message> = messages.iter().map(|m| Message::new(m)).collect();
+    let messages: Vec<Message> = messages.iter().map(|m| Message::from(m.clone())).collect(); // ? 什么奇怪的写法
     Ok(Json(messages))
 }
