@@ -6,10 +6,10 @@ use rbatis::crud::CRUD;
 use rbatis::{rbatis::Rbatis, Page, PageRequest};
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
-use waapi::model::{Message, Sender};
+use waapi::model::{Content, Message, Sender};
 
-use crate::database::WaMessageType;
 use crate::database::WaMessage;
+use crate::database::WaMessageType;
 use crate::utils;
 use crate::RB;
 
@@ -24,18 +24,21 @@ impl From<WaMessage> for Message {
     fn from(wa_message: WaMessage) -> Self {
         let sender_username = wa_message.get_sender_username();
         let sender_avatar = utils::get_avatar_path(&sender_username);
-        let r#type = match wa_message.r#type {
-            WaMessageType::Text => 1,
-            _ => 10000, // TODO: 增加消息类型的转换
+        let content: Content = match wa_message.r#type {
+            WaMessageType::Text => Content::Text {
+                text: wa_message.content.unwrap_or("Oops!!!".to_string()),
+            }, // TODO: 日志记录 or Content::Error
+            _ => Content::Unknown {
+                type_id: wa_message.r#type as i32,
+            },
         };
         Self {
             wa_owner: wa_message.wa_owner.clone(),
             id: wa_message.id.unwrap(),
             msg_svr_id: wa_message.msg_svr_id,
-            r#type,
             create_time: wa_message.create_time,
             talker: wa_message.talker.clone(),
-            content: wa_message.get_text_content(),
+            content,
             sender: Sender {
                 username: sender_username,
                 avatar: sender_avatar,

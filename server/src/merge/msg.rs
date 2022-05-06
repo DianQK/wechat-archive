@@ -1,6 +1,6 @@
 #![allow(non_snake_case)]
 
-use crate::database::{WaMessageType, WaContact, WaImgInfo, WaMessage, WaUserInfo};
+use crate::database::{WaContact, WaImgInfo, WaMessage, WaMessageType, WaUserInfo};
 
 #[crud_table(table_name:userinfo)]
 #[derive(Clone, Debug)]

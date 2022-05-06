@@ -1,9 +1,9 @@
 use chrono::{DateTime, FixedOffset, Local, NaiveDateTime, TimeZone, Utc};
 use gloo_net::http::Request;
+use waapi::model::{Content, Message};
 use wasm_bindgen_futures::spawn_local;
 use web_sys::Element;
 use yew::prelude::*;
-use waapi::model::Message;
 
 #[derive(Properties, PartialEq)]
 pub struct MessagesProps {
@@ -102,7 +102,14 @@ pub fn messages(props: &MessagesProps) -> Html {
                 <div class="content">
                 // TODO: 将时间计算移出来
                  <small class="info"><strong class="name">{ &message.sender.username }</strong> { FixedOffset::east(8 * 3600).timestamp((*&message.create_time as i64) / 1000, 0).format("%Y-%m-%d %H:%M:%S") }</small>
-                    { message.content.clone().unwrap_or("NULL".to_string()) }
+                {
+                    match &message.content {
+                        Content::Unknown { type_id } => html! { <div>{ format!("Unkown Message Type: {}", type_id) }</div> },
+                        Content::Text { text } => html! { <div>{ text }</div> },
+                        Content::Image { url } => html! { <img src={url.clone()}/> },
+                        Content::Emoji => html! { <div>{ "Emoji" }</div> }
+                    }
+                }
                  </div>
                 </div>
             }).collect::<Html>()}
