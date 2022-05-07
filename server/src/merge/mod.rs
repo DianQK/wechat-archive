@@ -149,8 +149,9 @@ impl MergeMicroMsg {
                 .await?;
             let exist_svr_ids: Vec<u64> = exist_messages.iter().map(|m| m.msg_svr_id).collect();
 
-            let messages: Vec<WaMessage> = msg_messages
-                .records
+            let mut records = msg_messages.records;
+            records.dedup_by(|a, b| a.msgSvrId == b.msgSvrId); // 为什么会出现相同的 svg id？
+            let messages: Vec<WaMessage> = records
                 .iter()
                 .filter(|message| !exist_svr_ids.contains(&message.msgSvrId))
                 .map(|message| WaMessage::from_msg(&owner, &message))
