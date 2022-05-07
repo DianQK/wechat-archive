@@ -45,6 +45,7 @@ impl From<WaMessage> for Message {
                     ), // TODO: 从 ImgeInfo2 中查询
                 }
             }
+            WaMessageType::Emoji => Content::Emoji,
             _ => Content::Unknown {
                 type_id: wa_message.r#type as i32,
             },
