@@ -108,7 +108,7 @@ pub fn messages(props: &MessagesProps) -> Html {
                         Content::Unknown { type_id } => html! { <div>{ format!("Unkown Message Type: {}", type_id) }</div> },
                         Content::Text { text } => html! { <div>{ text }</div> },
                         Content::Image { thumbnail_url, url } => html! { <PreviewImg thumbnail_url={thumbnail_url.clone()} url={url.clone()} /> },
-                        Content::Emoji => html! { <div>{ "Emoji" }</div> }
+                        Content::Emoji => html! { <div>{ "[动画表情]" }</div> }
                     }
                 }
                  </div>
