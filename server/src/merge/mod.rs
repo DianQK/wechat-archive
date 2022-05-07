@@ -64,9 +64,13 @@ impl MergeMicroMsg {
             let entry = entry?;
             let path = entry.path();
             let msg_db_path = path.join("EnMicroMsg.db");
+            let video_path = path.join("video"); // TODO: 如何处理 Android 外部数据？有哪些需要保存
             if msg_db_path.exists() {
                 info!("path: {}", path.display());
                 self.merge_user_database(msg_db_path.as_path()).await?;
+                self.merge_user_files(path.as_path())?;
+            } else if video_path.exists() {
+                info!("path: {}", path.display());
                 self.merge_user_files(path.as_path())?;
             }
         }
