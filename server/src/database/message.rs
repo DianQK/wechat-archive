@@ -1,9 +1,7 @@
 use log::error;
 use rbatis::rbatis::Rbatis;
-use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-// #[derive(Debug, Deserialize, Serialize, Clone, Copy)]
 #[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug, Clone, Copy)]
 #[repr(i32)]
 pub enum WaMessageType {
@@ -29,6 +27,7 @@ pub enum WaMessageType {
     U436207665 = 436207665,
     U469762097 = 469762097,
     U570425393 = 570425393,
+    U587202609 = 587202609,
     U754974769 = 754974769,
     U822083633 = 822083633,
     U922746929 = 922746929,

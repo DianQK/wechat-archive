@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS `wa_conversation`(
    `msg_count` INT UNSIGNED DEFAULT 0,
    `last_time` BIGINT UNSIGNED NOT NULL,
    `content` MEDIUMTEXT DEFAULT NULL,
-   `msg_type` INT NOT NULL,
+   -- `msg_type` INT NOT NULL,
    `digest` VARCHAR(255) DEFAULT '',
    `digest_user` TEXT DEFAULT NULL,
    PRIMARY KEY ( `id` ),
