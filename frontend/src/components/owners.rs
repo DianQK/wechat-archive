@@ -1,4 +1,4 @@
-use crate::app::{AppRoute, ConversationRoute};
+use crate::app::{ConversationRoute};
 use gloo_net::http::Request;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen_futures::spawn_local;
@@ -16,7 +16,7 @@ struct User {
 
 #[function_component(Owners)]
 pub fn owners() -> Html {
-    let users = use_state(|| Vec::<User>::new());
+    let users = use_state(Vec::<User>::new);
     {
         let users = users.clone();
         use_effect(move || {

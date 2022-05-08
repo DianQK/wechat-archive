@@ -1,5 +1,5 @@
 use crate::components::PreviewImg;
-use chrono::{DateTime, FixedOffset, Local, NaiveDateTime, TimeZone, Utc};
+use chrono::{FixedOffset, TimeZone};
 use gloo_net::http::Request;
 use waapi::model::{Content, Message};
 use wasm_bindgen_futures::spawn_local;
@@ -25,7 +25,7 @@ pub fn messages(props: &MessagesProps) -> Html {
         talker: props.talker.clone(),
         page: 1,
     });
-    let messages = use_state(|| Vec::<Message>::new());
+    let messages = use_state(Vec::<Message>::new);
     if state.talker != props.talker {
         state.set(State {
             talker: props.talker.clone(),
@@ -96,13 +96,13 @@ pub fn messages(props: &MessagesProps) -> Html {
                 { "加载更多" }
             </button>
             {(*messages).iter().map(|message| html!{
-                <div class="message" key={message.id.clone()}>
+                <div class="message" key={message.id}>
                 <figure class="avatar image is-48x48">
                     <img class="is-rounded" src={message.sender.avatar.clone()}/>
                 </figure>
                 <div class="content">
                 // TODO: 将时间计算移出来
-                 <small class="info"><strong class="name">{ &message.sender.username }</strong> { FixedOffset::east(8 * 3600).timestamp((*&message.create_time as i64) / 1000, 0).format("%Y-%m-%d %H:%M:%S") }</small>
+                 <small class="info"><strong class="name">{ &message.sender.username }</strong> { FixedOffset::east(8 * 3600).timestamp((message.create_time as i64) / 1000, 0).format("%Y-%m-%d %H:%M:%S") }</small>
                 {
                     match &message.content {
                         Content::Unknown { type_id } => html! { <div>{ format!("Unkown Message Type: {}", type_id) }</div> },

@@ -35,7 +35,7 @@ pub struct ConversationsProps {
 
 #[function_component(Conversations)]
 pub fn conversations(props: &ConversationsProps) -> Html {
-    let conversations = use_state(|| Vec::<Conversation>::new());
+    let conversations = use_state(Vec::<Conversation>::new);
     {
         let conversations = conversations.clone();
         use_effect_with_deps(
