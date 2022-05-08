@@ -1,4 +1,4 @@
-use crate::database::WaUserInfo;
+use crate::database::{WaMessageType, WaUserInfo};
 use crate::{
     database::{WaContact, WaConversation, WaImgInfo, WaMessage},
     merge::msg::MsgImgInfo,
@@ -140,7 +140,10 @@ impl MergeMicroMsg {
         // let msg_messages: Vec<MsgMessage> = msg_rb.fetch_list().await.unwrap();
         let mut page_request = PageRequest::new(1, 1000); //分页请求，页码，条数
                                                           // 忽略 msgSvrId 为 NULL 的数据，非正式聊天内容
-        let sql_wrapper = msg_rb.new_wrapper().is_not_null(MsgMessage::msgSvrId());
+        let sql_wrapper = msg_rb
+            .new_wrapper()
+            .is_not_null(MsgMessage::msgSvrId())
+            .not_in(MsgMessage::r#type(), &WaMessageType::ignore_types());
         let mut msg_messages: Page<MsgMessage> = msg_rb
             .fetch_page_by_wrapper(sql_wrapper.clone(), &page_request)
             .await?;

@@ -150,7 +150,7 @@ pub struct MsgMessage {
     pub solitaireFoldInfo: Option<rbatis::Bytes>,
     pub historyId: Option<String>,
 }
-impl_field_name_method!(MsgMessage { msgSvrId });
+impl_field_name_method!(MsgMessage { msgSvrId, r#type });
 
 impl WaMessage {
     pub fn from_msg(owner: &str, message: &MsgMessage) -> Self {

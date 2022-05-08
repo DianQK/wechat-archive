@@ -30,9 +30,15 @@ pub enum WaMessageType {
     U587202609 = 587202609,
     U754974769 = 754974769,
     U822083633 = 822083633,
-    U922746929 = 922746929,
+    Pat = 922746929, // 拍一拍？
     U973078577 = 973078577,
     U1090519089 = 1090519089,
+}
+
+impl WaMessageType {
+    pub fn ignore_types() -> Vec<WaMessageType> {
+        vec![WaMessageType::Pat]
+    }
 }
 
 #[crud_table]
