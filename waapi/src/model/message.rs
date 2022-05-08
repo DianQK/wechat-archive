@@ -11,6 +11,7 @@ pub enum Content {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Sender {
     pub username: String,
+    pub display_name: String,
     pub avatar: String,
 }
 

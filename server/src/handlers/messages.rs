@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use axum::extract::Path;
 use axum::extract::Query;
 use axum::response::IntoResponse;
@@ -6,8 +8,10 @@ use rbatis::crud::CRUD;
 use rbatis::{rbatis::Rbatis, Page, PageRequest};
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
+use waapi::model::message;
 use waapi::model::{Content, Message, Sender};
 
+use crate::database::WaContact;
 use crate::database::WaMessage;
 use crate::database::WaMessageType;
 use crate::utils;
@@ -20,16 +24,16 @@ pub struct Params {
     size: u64,
 }
 
-impl From<WaMessage> for Message {
-    fn from(wa_message: WaMessage) -> Self {
-        let sender_username = wa_message.get_sender_username();
+impl WaMessage {
+    fn get_message(&self, display_name_map: &HashMap<String, String>) -> Message {
+        let sender_username = self.get_sender_username();
         let sender_avatar = utils::get_avatar_path(&sender_username);
-        let content: Content = match wa_message.r#type {
+        let content: Content = match self.r#type {
             WaMessageType::Text => Content::Text {
-                text: wa_message.content.unwrap_or("Oops!!!".to_string()),
+                text: self.content.clone().unwrap_or("Oops!!!".to_string()),
             }, // TODO: 日志记录 or Content::Error
             WaMessageType::Image => {
-                let img_path = &wa_message.img_path.unwrap();
+                let img_path = &self.img_path.as_ref().unwrap();
                 let img_id = &img_path[23..img_path.len()];
                 let img_prefix_1 = &img_id[0..2];
                 let img_prefix_2 = &img_id[2..4];
@@ -47,18 +51,19 @@ impl From<WaMessage> for Message {
             }
             WaMessageType::Emoji => Content::Emoji,
             _ => Content::Unknown {
-                type_id: wa_message.r#type as i32,
+                type_id: self.r#type as i32,
             },
         };
-        Self {
-            wa_owner: wa_message.wa_owner.clone(),
-            id: wa_message.id.unwrap(),
-            msg_svr_id: wa_message.msg_svr_id,
-            create_time: wa_message.create_time,
-            talker: wa_message.talker.clone(),
+        Message {
+            wa_owner: self.wa_owner.clone(),
+            id: self.id.unwrap(),
+            msg_svr_id: self.msg_svr_id,
+            create_time: self.create_time,
+            talker: self.talker.clone(),
             content,
             sender: Sender {
-                username: sender_username,
+                username: sender_username.clone(),
+                display_name: display_name_map[&sender_username].clone(),
                 avatar: sender_avatar,
             },
         }
@@ -82,6 +87,18 @@ pub async fn get_messages(
         .unwrap();
     let mut messages = messages.records;
     messages.reverse(); //TODO: 通过 sql offset + asc 直接获取？
-    let messages: Vec<Message> = messages.iter().map(|m| Message::from(m.clone())).collect(); // ? 什么奇怪的写法
+    let usernames: Vec<String> = messages.iter().map(|m| m.get_sender_username()).collect();
+    let mut display_name_map: HashMap<String, String> = HashMap::new();
+    let contacts: Vec<WaContact> = RB
+        .fetch_list_by_column(WaContact::username(), &usernames)
+        .await
+        .unwrap();
+    for contact in contacts {
+        display_name_map.insert(contact.username.clone(), contact.display_name.clone());
+    }
+    let messages: Vec<Message> = messages
+        .iter()
+        .map(|m| m.get_message(&display_name_map))
+        .collect(); // ? 什么奇怪的写法
     Ok(Json(messages))
 }

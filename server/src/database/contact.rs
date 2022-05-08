@@ -7,6 +7,7 @@ pub struct WaContact {
     pub con_remark: Option<String>, // 备注
     pub domain_list: Option<String>,
     pub nickname: Option<String>, // 昵称
+    pub display_name: String,     // 展示的名称
     pub py_initial: Option<String>,
     pub quan_pin: Option<String>,
     pub show_head: Option<i32>,
@@ -28,4 +29,7 @@ pub struct WaContact {
     pub username_flag: Option<i64>,
 }
 
-impl_field_name_method!(WaContact { username });
+impl_field_name_method!(WaContact {
+    username,
+    display_name
+});
