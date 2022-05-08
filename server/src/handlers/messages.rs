@@ -62,6 +62,12 @@ impl WaMessage {
                 Content::Image { thumbnail_url, url }
             }
             WaMessageType::Emoji => Content::Emoji,
+            WaMessageType::Video => {
+                let filename = self.img_path.as_ref().unwrap();
+                let poster_url = format!("/assets/video/{filename}.jpg");
+                let url = format!("/assets/video/{filename}.mp4");
+                Content::Video { poster_url, url }
+            }
             _ => Content::Unknown {
                 type_id: self.r#type as i32,
             },

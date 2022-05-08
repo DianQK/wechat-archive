@@ -6,6 +6,7 @@ pub enum Content {
     Text { text: String },
     Image { thumbnail_url: String, url: String },
     Emoji,
+    Video { poster_url: String, url: String }
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
