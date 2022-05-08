@@ -12,6 +12,7 @@ use serde::Deserialize;
 use waapi::model::{Content, Message, Sender};
 
 use crate::database::WaContact;
+use crate::database::WaImgInfo;
 use crate::database::WaMessage;
 use crate::database::WaMessageType;
 use crate::utils;
@@ -25,7 +26,11 @@ pub struct Params {
 }
 
 impl WaMessage {
-    fn get_message(&self, display_name_map: &HashMap<String, String>) -> Message {
+    fn get_message(
+        &self,
+        display_name_map: &HashMap<String, String>,
+        image_map: &HashMap<u64, &WaImgInfo>,
+    ) -> Message {
         let sender_username = self.get_sender_username();
         let sender_avatar = utils::get_avatar_path(&sender_username);
         let content: Content = match self.r#type {
@@ -37,17 +42,24 @@ impl WaMessage {
                 let img_id = &img_path[23..img_path.len()];
                 let img_prefix_1 = &img_id[0..2];
                 let img_prefix_2 = &img_id[2..4];
+                let thumbnail_url = format!(
+                    "/assets/image2/{}/{}/th_{}",
+                    img_prefix_1, img_prefix_2, img_id
+                );
                 // TODO: 不存在的图片能否重新下载？
-                Content::Image {
-                    thumbnail_url: format!(
-                        "/assets/image2/{}/{}/th_{}",
-                        img_prefix_1, img_prefix_2, img_id
-                    ),
-                    url: format!(
-                        "/assets/image2/{}/{}/{}.jpg",
-                        img_prefix_1, img_prefix_2, img_id
-                    ), // TODO: 从 ImgeInfo2 中查询
-                }
+                let url = match image_map.get(&self.msg_svr_id) {
+                    Some(image_info) => {
+                        let big_img_path = &image_info.big_img_path;
+                        let img_prefix_1 = &big_img_path[0..2];
+                        let img_prefix_2 = &big_img_path[2..4];
+                        format!(
+                            "/assets/image2/{img_prefix_1}/{img_prefix_2}/{}",
+                            image_info.big_img_path
+                        )
+                    }
+                    None => format!("{thumbnail_url}hd"),
+                };
+                Content::Image { thumbnail_url, url }
             }
             WaMessageType::Emoji => Content::Emoji,
             _ => Content::Unknown {
@@ -95,10 +107,20 @@ pub async fn get_messages(
         .unwrap();
     for contact in contacts {
         display_name_map.insert(contact.username.clone(), contact.wa_display_name.clone());
+        // TODO: 更合适的处理方式？
+    }
+    let svr_ids: Vec<u64> = messages.iter().map(|m| m.msg_svr_id).collect();
+    let images: Vec<WaImgInfo> = RB
+        .fetch_list_by_column(WaImgInfo::msg_svr_id(), &svr_ids)
+        .await
+        .unwrap();
+    let mut image_map: HashMap<u64, &WaImgInfo> = HashMap::new();
+    for image in images.iter() {
+        image_map.insert(image.msg_svr_id, image);
     }
     let messages: Vec<Message> = messages
         .iter()
-        .map(|m| m.get_message(&display_name_map))
+        .map(|m| m.get_message(&display_name_map, &image_map))
         .collect(); // ? 什么奇怪的写法
     Ok(Json(messages))
 }
