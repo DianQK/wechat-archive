@@ -8,7 +8,7 @@ COPY ./waapi .
 
 RUN cargo install trunk
 
-RUN cargo build --manifest-path server/Cargo.toml && cp ./server/target/release/wechat-archive .
+RUN cargo build --release --manifest-path server/Cargo.toml && cp ./server/target/release/wechat-archive .
 RUN trunk --config frontend/Trunk.toml build --release --public-url /static/
 
 FROM debian:stable-slim as runner
