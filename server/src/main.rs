@@ -79,9 +79,13 @@ async fn main() {
 
     // tracing_subscriber::fmt::init();
     fast_log::init(fast_log::config::Config::new().console()).expect("日志初始化失败");
-    RB.link("mysql://root:wechat-archive@localhost:3306/wechat-archive")
-        .await
-        .unwrap();
+    let mysql_hostname = std::env::var("MYSQL_HOSTNAME").unwrap_or("localhost".to_string());
+    log::info!("{}", mysql_hostname);
+    RB.link(&format!(
+        "mysql://root:wechat-archive@{mysql_hostname}:3306/wechat-archive"
+    ))
+    .await
+    .unwrap();
     RB.exec(include_str!("sql/init.sql"), vec![]).await.unwrap();
 
     match opt.command {
