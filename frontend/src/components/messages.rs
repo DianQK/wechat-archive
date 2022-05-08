@@ -102,7 +102,7 @@ pub fn messages(props: &MessagesProps) -> Html {
                 </figure>
                 <div class="content">
                 // TODO: 将时间计算移出来
-                 <small class="info"><strong class="name">{ &message.sender.username }</strong> { FixedOffset::east(8 * 3600).timestamp((message.create_time as i64) / 1000, 0).format("%Y-%m-%d %H:%M:%S") }</small>
+                 <small class="info"><strong class="name">{ &message.sender.display_name }</strong> { FixedOffset::east(8 * 3600).timestamp((message.create_time as i64) / 1000, 0).format("%Y-%m-%d %H:%M:%S") }</small>
                 {
                     match &message.content {
                         Content::Unknown { type_id } => html! { <div>{ format!("Unkown Message Type: {}", type_id) }</div> },
