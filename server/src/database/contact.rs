@@ -31,6 +31,7 @@ pub struct WaContact {
 }
 
 impl_field_name_method!(WaContact {
+    id,
     wa_owner
     username,
     wa_display_name

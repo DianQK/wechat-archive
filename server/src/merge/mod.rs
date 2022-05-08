@@ -115,17 +115,17 @@ impl MergeMicroMsg {
         // 保存联系人
         let msg_contacts: Vec<MsgRContact> = msg_rb.fetch_list().await.unwrap();
         for msg_contact in msg_contacts.iter() {
-            let wa_contact = WaContact::from_msg(&owner, &msg_contact);
+            let mut wa_contact = WaContact::from_msg(&owner, &msg_contact);
             let select_wrapper = RB
                 .new_wrapper()
                 .eq(WaContact::wa_owner(), owner)
                 .eq(WaContact::username(), &wa_contact.username);
             let old_wa_contact: Option<WaContact> =
-                RB.fetch_by_wrapper(select_wrapper.clone()).await.unwrap();
+                RB.fetch_by_wrapper(select_wrapper).await.unwrap();
             match old_wa_contact {
-                Some(_) => {
-                    RB.update_by_wrapper(&wa_contact, select_wrapper, &[])
-                        .await?;
+                Some(old_wa_contact) => {
+                    wa_contact.id = old_wa_contact.id;
+                    RB.update_by_column(WaContact::id(), &wa_contact).await?;
                 }
                 None => {
                     RB.save(&wa_contact, &[]).await?;
