@@ -93,6 +93,7 @@ impl WaContact {
             }
         }
         WaContact {
+            id: None,
             wa_owner: owner.to_string(),
             username: rcontact.username.clone(),
             alias: rcontact.alias.clone(),

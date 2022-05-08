@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `wa_user_info`(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `wa_contact`( -- rcontact
+   `id` INT UNSIGNED AUTO_INCREMENT,
    `wa_owner` VARCHAR(255) NOT NULL COMMENT '属于谁的好友',
    `username` VARCHAR(255) NOT NULL COMMENT '微信内部唯一 id',
    `alias` VARCHAR(255) DEFAULT NULL COMMENT '用户可以设置的微信号',
@@ -33,9 +34,9 @@ CREATE TABLE IF NOT EXISTS `wa_contact`( -- rcontact
    `source_ext_info` VARCHAR(255),
    `ticket` VARCHAR(255) DEFAULT NULL,
    `username_flag` BIGINT DEFAULT 0,
-   PRIMARY KEY ( `username` ),
+   PRIMARY KEY ( `id` ),
    UNIQUE KEY `uniq_id` (`wa_owner`,`username`),
-   INDEX(`wa_owner`, `alias`)
+   INDEX(`username`, `wa_owner`, `alias`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `wa_message`( -- message

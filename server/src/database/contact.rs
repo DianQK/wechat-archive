@@ -1,13 +1,14 @@
 #[crud_table]
 #[derive(Clone, Debug)]
 pub struct WaContact {
+    pub id: Option<u32>,
     pub wa_owner: String,
     pub username: String,
     pub alias: Option<String>,      // username alias
     pub con_remark: Option<String>, // 备注
     pub domain_list: Option<String>,
     pub nickname: Option<String>, // 昵称
-    pub wa_display_name: String,     // 展示的名称
+    pub wa_display_name: String,  // 展示的名称
     pub py_initial: Option<String>,
     pub quan_pin: Option<String>,
     pub show_head: Option<i32>,
@@ -30,6 +31,7 @@ pub struct WaContact {
 }
 
 impl_field_name_method!(WaContact {
+    wa_owner
     username,
     wa_display_name
 });
