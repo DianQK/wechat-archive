@@ -56,7 +56,7 @@ impl MergeMicroMsg {
             .arg(self.dest.as_path())
             .arg("-v")
             .output()
-            .expect(&format!("同步 {} 失败", source.display()));
+            .unwrap_or_else(|_| panic!("同步 {} 失败", source.display()));
     }
 
     async fn merge_users_history(&self) -> Result<()> {
@@ -94,14 +94,14 @@ impl MergeMicroMsg {
         let password = self
             .password_map
             .get(&md5_path_name)
-            .expect(&format!("没有设置 {} 路径的密码", &md5_path_name));
+            .unwrap_or_else(|| panic!("没有设置 {} 路径的密码", &md5_path_name));
         let output = Command::new("sqlcipher")
             .arg(db_path)
             .arg(&format!("PRAGMA key = '{}';", password))
             .arg("PRAGMA cipher_use_hmac = OFF; PRAGMA cipher_page_size = 1024; PRAGMA kdf_iter = 4000; PRAGMA cipher_compatibility = 1;")
             .arg(&format!("ATTACH DATABASE '{}' AS db KEY ''; SELECT sqlcipher_export('db'); DETACH DATABASE db;", decrypted_db_path.display()))
             .output()
-            .expect(&format!("同步用户数据失败"));
+            .expect("同步用户数据失败");
         info!("output: {:?}", output);
         let msg_rb = Rbatis::new();
         msg_rb
@@ -115,7 +115,7 @@ impl MergeMicroMsg {
         // 保存联系人
         let msg_contacts: Vec<MsgRContact> = msg_rb.fetch_list().await.unwrap();
         for msg_contact in msg_contacts.iter() {
-            let mut wa_contact = WaContact::from_msg(&owner, &msg_contact);
+            let mut wa_contact = WaContact::from_msg(owner, msg_contact);
             let select_wrapper = RB
                 .new_wrapper()
                 .eq(WaContact::wa_owner(), owner)
@@ -164,7 +164,7 @@ impl MergeMicroMsg {
             let messages: Vec<WaMessage> = records
                 .iter()
                 .filter(|message| !exist_svr_ids.contains(&message.msgSvrId))
-                .map(|message| WaMessage::from_msg(&owner, &message))
+                .map(|message| WaMessage::from_msg(owner, message))
                 .collect();
             RB.save_batch(&messages, &[]).await?;
             page_request.page_no += 1;
@@ -175,7 +175,7 @@ impl MergeMicroMsg {
         Ok(())
     }
 
-    async fn merge_img_infos(&self, msg_rb: &Rbatis, owner: &str) -> Result<()> {
+    async fn merge_img_infos(&self, msg_rb: &Rbatis, _owner: &str) -> Result<()> {
         // 保存图片信息
         let mut page_request = PageRequest::new(1, 1000); //分页请求，页码，条数
                                                           // 不清楚 msgSvrId 为 NULL 的情况是什么图片
@@ -200,7 +200,7 @@ impl MergeMicroMsg {
             let img_infos: Vec<WaImgInfo> = records
                 .iter()
                 .filter(|img_info| !exist_svr_ids.contains(&img_info.msgSvrId))
-                .map(|img_info| WaImgInfo::from_msg(&img_info))
+                .map(WaImgInfo::from_msg)
                 .collect();
             RB.save_batch(&img_infos, &[]).await?;
             page_request.page_no += 1;
@@ -280,7 +280,7 @@ impl MergeMicroMsg {
                         id: None,
                         owner: owner.to_string(),
                         username: message.talker.clone(),
-                        msg_count: msg_count,
+                        msg_count,
                         last_time: message.create_time,
                         content: message.content.clone(),
                         // msg_type: message.r#type,

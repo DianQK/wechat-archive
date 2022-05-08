@@ -5,10 +5,10 @@ use axum::extract::Query;
 use axum::response::IntoResponse;
 use axum::Json;
 use rbatis::crud::CRUD;
-use rbatis::{rbatis::Rbatis, Page, PageRequest};
+use rbatis::{Page, PageRequest};
 use reqwest::StatusCode;
-use serde::{Deserialize, Serialize};
-use waapi::model::message;
+use serde::Deserialize;
+
 use waapi::model::{Content, Message, Sender};
 
 use crate::database::WaContact;

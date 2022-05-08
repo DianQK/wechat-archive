@@ -1,11 +1,10 @@
 use axum::extract::Path;
 use axum::response::IntoResponse;
 use axum::Json;
-use rbatis::crud::CRUD;
+
 use rbatis::rbatis::Rbatis;
 use reqwest::StatusCode;
 
-use crate::database::WaConversation;
 use crate::{utils, RB};
 
 pub async fn get_conversations(

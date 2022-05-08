@@ -119,13 +119,13 @@ impl WaMessage {
         if self.is_chatroom() {
             let content = &self.content.as_ref().unwrap();
             if let Some(index) = content.find(':') {
-                return content[0..index].to_string();
+                content[0..index].to_string()
             } else {
                 // error
-                return "".to_string();
+                "".to_string()
             }
         } else {
-            return self.talker.clone();
+            self.talker.clone()
         }
     }
 

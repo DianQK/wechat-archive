@@ -30,6 +30,6 @@ impl User {
 
 pub async fn get_users() -> Result<impl IntoResponse, StatusCode> {
     let users: Vec<WaUserInfo> = RB.fetch_list().await.unwrap_or_default();
-    let users: Vec<User> = users.iter().map(|user| User::new(user)).collect();
+    let users: Vec<User> = users.iter().map(User::new).collect();
     Ok(Json(users))
 }

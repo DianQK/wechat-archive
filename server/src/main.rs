@@ -1,12 +1,11 @@
 use axum::{
     http::StatusCode,
-    response::IntoResponse,
-    routing::{get, get_service, post},
-    Json, Router,
+    routing::{get, get_service},
+    Router,
 };
 use axum_extra::routing::SpaRouter;
-use clap::{Command, Parser, Subcommand};
-use serde::{Deserialize, Serialize};
+use clap::{Parser, Subcommand};
+use serde::Deserialize;
 use std::str::FromStr;
 use std::{
     collections::HashMap,
@@ -14,8 +13,7 @@ use std::{
     io::Read,
     net::{IpAddr, Ipv4Addr, SocketAddr},
 };
-use tokio;
-use toml::value::Table;
+
 use tower::ServiceBuilder;
 use tower_http::{services::ServeDir, trace::TraceLayer};
 
