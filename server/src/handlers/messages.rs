@@ -28,7 +28,7 @@ pub struct Params {
 impl WaMessage {
     fn get_message(
         &self,
-        display_name_map: &HashMap<String, String>,
+        display_name_map: &HashMap<&String, &String>,
         image_map: &HashMap<u64, &WaImgInfo>,
     ) -> Message {
         let sender_username = self.get_sender_username();
@@ -100,13 +100,13 @@ pub async fn get_messages(
     let mut messages = messages.records;
     messages.reverse(); //TODO: 通过 sql offset + asc 直接获取？
     let usernames: Vec<String> = messages.iter().map(|m| m.get_sender_username()).collect();
-    let mut display_name_map: HashMap<String, String> = HashMap::new();
+    let mut display_name_map: HashMap<&String, &String> = HashMap::new();
     let contacts: Vec<WaContact> = RB
         .fetch_list_by_column(WaContact::username(), &usernames)
         .await
         .unwrap();
-    for contact in contacts {
-        display_name_map.insert(contact.username.clone(), contact.wa_display_name.clone());
+    for contact in contacts.iter() {
+        display_name_map.insert(&contact.username, &contact.wa_display_name);
         // TODO: 更合适的处理方式？
     }
     let svr_ids: Vec<u64> = messages.iter().map(|m| m.msg_svr_id).collect();
