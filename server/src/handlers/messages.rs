@@ -94,7 +94,7 @@ pub async fn get_messages(
         .await
         .unwrap();
     for contact in contacts {
-        display_name_map.insert(contact.username.clone(), contact.display_name.clone());
+        display_name_map.insert(contact.username.clone(), contact.wa_display_name.clone());
     }
     let messages: Vec<Message> = messages
         .iter()

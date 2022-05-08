@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `wa_contact`( -- rcontact
    `con_remark` VARCHAR(255) DEFAULT NULL,
    `domain_list` VARCHAR(255) DEFAULT NULL,
    `nickname` VARCHAR(255) DEFAULT NULL COMMENT '微信昵称',
-   `display_name` VARCHAR(255) NOT NULL,
+   `wa_display_name` VARCHAR(255) NOT NULL,
    `py_initial` VARCHAR(255) DEFAULT NULL,
    `quan_pin` VARCHAR(255) DEFAULT NULL,
    `show_head` INTEGER DEFAULT 0,

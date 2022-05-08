@@ -77,17 +77,19 @@ pub struct MsgRContact {
 impl WaContact {
     pub fn from_msg(owner: &str, rcontact: &MsgRContact) -> Self {
         let mut display_name = rcontact.username.clone();
-        if let Some(conRemark) = &rcontact.conRemark {
-            if !conRemark.is_empty() {
-                display_name = conRemark.clone();
+        if let Some(alias) = &rcontact.alias {
+            if !alias.is_empty() {
+                display_name = alias.clone();
             }
-        } else if let Some(nickname) = &rcontact.nickname {
+        }
+        if let Some(nickname) = &rcontact.nickname {
             if !nickname.is_empty() {
                 display_name = nickname.clone();
             }
-        } else if let Some(alias) = &rcontact.alias {
-            if !alias.is_empty() {
-                display_name = alias.clone();
+        }
+        if let Some(conRemark) = &rcontact.conRemark {
+            if !conRemark.is_empty() {
+                display_name = conRemark.clone();
             }
         }
         WaContact {
@@ -97,7 +99,7 @@ impl WaContact {
             con_remark: rcontact.conRemark.clone(),
             domain_list: rcontact.domainList.clone(),
             nickname: rcontact.nickname.clone(),
-            display_name,
+            wa_display_name: display_name,
             py_initial: rcontact.pyInitial.clone(),
             quan_pin: rcontact.quanPin.clone(),
             show_head: rcontact.showHead.clone(),
