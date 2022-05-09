@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  wechat-archive:
+    image: dianqk/wechat-archive:latest
+    volumes:
+      - ./wechat-archive.toml:/wechat-archive.toml
+      - ./import:/import
+      - ./assets:/assets
+    ports:
+      - 8080:8080
+  db:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: wechat-archive
+      MYSQL_ROOT_PASSWORD: wechat-archive
+    volumes: 
+      - ./data:/var/lib/mysql
