@@ -29,7 +29,9 @@ pub fn owners() -> Html {
                         .json()
                         .await
                         .unwrap();
-                    users.set(resp);
+                    if !resp.is_empty() {
+                        users.set(resp);
+                    }
                 });
             }
             || {}
