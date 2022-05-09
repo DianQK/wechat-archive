@@ -56,6 +56,9 @@ struct Opt {
     #[clap(long = "assets-dir", default_value = "./assets")]
     assets_dir: String,
 
+    #[clap(long = "config", default_value = "./wechat-archive.toml")]
+    config: String,
+
     #[clap(subcommand)]
     command: Option<Commands>,
 }
@@ -92,7 +95,7 @@ async fn main() {
         Some(subcommand) => {
             match subcommand {
                 Commands::Merge { path } => {
-                    let mut file = File::open("wechat-archive.toml").expect("文件打开失败");
+                    let mut file = File::open(opt.config).expect("文件打开失败");
                     let mut config_string = String::new();
                     file.read_to_string(&mut config_string).expect("读取失败");
                     let c: Config = toml::from_str(&config_string).unwrap();
