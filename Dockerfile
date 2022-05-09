@@ -1,15 +1,14 @@
 FROM rust:latest as builder
 
+RUN cargo install trunk
+RUN rustup target add wasm32-unknown-unknown
+
 WORKDIR /usr/src/wechat-archive
 
-COPY ./frontend .
-COPY ./server .
-COPY ./waapi .
+COPY . .
 
-RUN cargo install trunk
-
-RUN cargo build --release --manifest-path server/Cargo.toml && cp ./server/target/release/wechat-archive .
-RUN trunk --config frontend/Trunk.toml build --release --public-url /static/
+RUN cargo build --release --manifest-path ./server/Cargo.toml && cp ./server/target/release/wechat-archive .
+RUN trunk --config ./frontend/Trunk.toml build --release --public-url /static/
 
 FROM debian:stable-slim as runner
 RUN apt-get update && apt-get install -y sqlcipher && rm -rf /var/lib/apt/lists/*
